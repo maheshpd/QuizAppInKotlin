@@ -1,11 +1,11 @@
 package com.createsapp.quizapp
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_quiz.*
@@ -16,10 +16,13 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
     private var mQuestionList: ArrayList<Question>? = null
     private var mSelectedOptionPosition: Int = 0
     private var mCorrectAnswer: Int = 0
+    private var mUserName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
+
+        mUserName = intent.getStringExtra(Constants.USER_NAME)
 
         mQuestionList = Constants.getQuestion()
 
@@ -101,11 +104,13 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
                             setQuestion()
                         }
                         else -> {
-                            Toast.makeText(
-                                this,
-                                "You have successfully completed the Quiz",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            val intent = Intent(this, ResultActivity::class.java)
+                            intent.putExtra(Constants.USER_NAME, mUserName)
+                            intent.putExtra(Constants.CORRECT_ANSWER, mCorrectAnswer)
+                            intent.putExtra(Constants.TOTAL_QUESTION, mQuestionList!!.size)
+                            startActivity(intent)
+                            finish()
+
                         }
                     }
 
@@ -121,6 +126,7 @@ class QuizActivity : AppCompatActivity(), View.OnClickListener {
 
                     if (mCurrentPosition == mQuestionList!!.size) {
                         btn_submit.text = "FINISH"
+
                     } else {
                         btn_submit.text = "GO TO NEXT QUESTION"
                     }
